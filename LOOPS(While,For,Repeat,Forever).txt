@@ -1,0 +1,121 @@
+
+				                                          $  LOOP  $
+				                                       _______________
+
+1== WHILE LOOP :::
+
+	module counter(q,start)
+  	output reg [3:0]q;
+  	input start;
+  	integer i;
+  
+  	initial q=0;
+  
+  	always@(negedge start)
+    	begin
+      	i=0;
+      	while(i<3)
+        begin
+        #(10) q = q +1;
+      	i=i+1;
+        end
+    	end
+	endmodule
+
+
+
+2==  FOR LOOP :::
+   
+     module counter(q,start);
+ 	 output reg [3:0] q;
+ 	 input start;
+ 	 integer i;
+  
+ 	 initial q=0;
+  
+ 	always@(negedge start)
+  	 begin
+    	  for(i=0;i<3;i++)
+     	   begin
+     	     #(10) q = q +1;
+      	   end
+    	 end
+      endmodule
+
+
+
+3== REPEAT LOOP :::
+
+    SYNTAX=== repeat(times) (delay) (statement);
+                                                  //we don't use brackets in statements it shows an error in syntax of REPEAT
+
+   module counter(q,start);
+     output reg [3:0] q;
+     input start;
+     integer i;
+  
+     initial q=0;
+  
+    always@(negedge start)
+     begin
+      
+      repeat(4) #(10) q = q +1;          // after getting the first negedge start... 
+                                           it do the operation 4 times then again wait for negedge start signal
+     end
+   endmodule
+
+
+
+
+4== FOREVER LOOP :::
+    
+    * It mainly use in testbesnch.
+    * It mainly use for clk generation.
+
+    module counter(q,start);
+    output reg [3:0] q;
+    input start;
+    integer i;
+  
+    initial q=0;
+  
+    always@(negedge start)
+     begin
+      
+      forever #(10) q = q +1;    // when it get the start negedge 1 time then it start their
+                                    process irrespective to the negedge start signal
+                                         
+    end
+    endmodule
+
+
+
+
+
+
+
+					                      TEST BENCH FOR ALL BY USING FOREVER LOOP
+					             __________________________________________________________
+	
+
+module stimulus;
+  reg start;
+  wire [3:0]q;
+  
+  counter DUT(q,start);
+  
+  initial
+    begin
+      $dumpfile("dump.vcd");
+      $dumpvars(0);                or    $dumpvars(0,stimulus);
+      
+      monitor;
+      start=0;
+      forever #(5) start = ~start;                              // USING FOREVER LOOP
+    end
+  
+  task monitor;
+    
+    $monitor($time," q=%d",q);
+  endtask
+endmodule
